@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filmes Favoritos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1 id="nomeUsuario"></h1>
+    <h3 id="emailUsuario"></h3>
+
+    <h2>Seus Filmes Favoritos</h2>
+    <ul id="filmesFavoritos"></ul>
+
+    <form id="addFilmForm">
+        <label for="registerFilmTitle">Título do Filme:</label>
+        <input type="text" id="registerFilmTitle" placeholder="Digite o título do filme">
+
+        <label for="registerFilmCover">Capa do Filme:</label>
+        <input type="file" id="registerFilmCover" accept="image/*">
+
+        <button type="submit">Adicionar Filme</button>
+    </form>
+
+    <script>
+       
+        const nomeUsuario = localStorage.getItem('userName');
+        const emailUsuario = localStorage.getItem('userEmail');
+        let filmesFavoritos = JSON.parse(localStorage.getItem('userFilms')) || [];
+
+        
+        document.getElementById('nomeUsuario').textContent = `Bem-vindo(a), ${nomeUsuario}!`;
+        document.getElementById('emailUsuario').textContent = `Seu email: ${emailUsuario}`;
+
+        const listaFilmes = document.getElementById('filmesFavoritos');
+
+        
+        function renderizarFilmes() {
+            listaFilmes.innerHTML = '';
+            filmesFavoritos.forEach((filme, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="film-item">
+                        <img src="${filme.cover}" alt="${filme.title}">
+                        <span>${filme.title}</span>
+                        <button onclick="removerFilme(${index})">Remover</button>
+                    </div>
+                `;
+                listaFilmes.appendChild(li);
+            });
+        }
+
+        
+        document.getElementById('addFilmForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const filmTitle = document.getElementById('registerFilmTitle').value;
+            const filmCoverInput = document.getElementById('registerFilmCover');
+            const filmCoverFile = filmCoverInput.files[0];
+
+            if (!filmTitle || !filmCoverFile) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                
+                const novoFilme = { title: filmTitle, cover: event.target.result };
+                filmesFavoritos.push(novoFilme);
+                localStorage.setItem('userFilms', JSON.stringify(filmesFavoritos));
+
+                
+                renderizarFilmes();
+
+               
+                document.getElementById('registerFilmTitle').value = '';
+                document.getElementById('registerFilmCover').value = '';
+            };
+
+            reader.readAsDataURL(filmCoverFile);
+        });
+
+       
+        function removerFilme(index) {
+            filmesFavoritos.splice(index, 1);
+            localStorage.setItem('userFilms', JSON.stringify(filmesFavoritos));
+            renderizarFilmes();
+        }
+
+        renderizarFilmes();
+    </script>
+</body>
+</html>
