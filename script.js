@@ -1,6 +1,5 @@
 let filmList = JSON.parse(localStorage.getItem('userFilms')) || [];
 
-
 function toggleForm() {
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
@@ -8,7 +7,6 @@ function toggleForm() {
     loginForm.style.display = loginForm.style.display === 'none' ? 'block' : 'none';
     registerForm.style.display = registerForm.style.display === 'none' ? 'block' : 'none';
 }
-
 
 function addFilm() {
     const filmTitle = document.getElementById('registerFilmTitle').value;
